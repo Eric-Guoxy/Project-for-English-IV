@@ -1,11 +1,9 @@
 import queue
 import random
 
-from IPython.utils.tokenutil import token_at_cursor
+#from IPython.utils.tokenutil import token_at_cursor
 
 from Passenger import Passenger
-global clock
-
 
 ##############################################################
 # Station.py                                                 #
@@ -21,7 +19,7 @@ class Station:
         """
         self.name = name
         self.passengers = queue.Queue()
-        stations = ["", "", "", "", ""]
+        stations = ["Station A", "Station B", "Station C", "Station D", "Station E"]
         self.later_stations = stations[stations.index(name):]
 
     def generate_passenger(self, p, time):
@@ -40,15 +38,16 @@ class Station:
         """
         rand = random.random()
         if rand < p:
-            new_passenger = Passenger.__init__(time, random.choice(self.later_stations))
+            new_passenger = Passenger(time, random.choice(self.later_stations))
             self.passengers.put(new_passenger)
 
-    def train_arrival(self, n):
+    def train_arrival(self, n, time):
         """
         Simulate the behavior of a train arrival and push out the designated
         amount of passengers.
 
         :param n: The amount of passengers to push off queue.
+        :param time: The global time when this method is called.
         :return : (1) The overall waiting time.
                   (2) The worst case waiting time.
                   (3) The amount of passengers that gets on the train.
@@ -58,7 +57,7 @@ class Station:
         amount = 0
         while amount < n and not self.passengers.empty():
             passenger = self.passengers.get()
-            waiting_time = passenger.waiting_time(clock)
+            waiting_time = passenger.waiting_time(time)
             total_wait += waiting_time
             if waiting_time > worst_wait:
                 worst_wait = waiting_time
